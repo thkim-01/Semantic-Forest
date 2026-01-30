@@ -1,0 +1,6 @@
+Dataset: tox21
+Target: SR-p53
+
+Accuracy: 0.9292
+AUC_ROC: 0.6874247336729967
+F1: 0.2258

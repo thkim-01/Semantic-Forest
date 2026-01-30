@@ -1,0 +1,8 @@
+rdkit
+owlready2
+rdflib
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn

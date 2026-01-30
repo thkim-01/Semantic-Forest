@@ -1,0 +1,6 @@
+Dataset: clintox
+Target: CT_TOX
+
+Accuracy: 0.9257
+AUC_ROC: 0.7705706702057068
+F1: 0.0833

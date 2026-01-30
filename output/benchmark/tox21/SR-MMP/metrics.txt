@@ -1,0 +1,6 @@
+Dataset: tox21
+Target: SR-MMP
+
+Accuracy: 0.8787
+AUC_ROC: 0.8453726549302036
+F1: 0.5466

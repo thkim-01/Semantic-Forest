@@ -1,0 +1,6 @@
+Dataset: tox21
+Target: SR-ARE
+
+Accuracy: 0.8123
+AUC_ROC: 0.7033800230369678
+F1: 0.3262

@@ -1,0 +1,6 @@
+Dataset: tox21
+Target: NR-PPAR-gamma
+
+Accuracy: 0.9674
+AUC_ROC: 0.6875498802873103
+F1: 0.0870

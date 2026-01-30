@@ -1,0 +1,6 @@
+Dataset: hiv
+Target: HIV_active
+
+Accuracy: 0.9589
+AUC_ROC: 0.6989819483207916
+F1: 0.2066

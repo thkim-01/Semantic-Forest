@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Neoplasms benign, malignant and unspecified (incl cysts and polyps)
+
+Accuracy: 0.6993
+AUC_ROC: 0.5421800947867299
+F1: 0.3485

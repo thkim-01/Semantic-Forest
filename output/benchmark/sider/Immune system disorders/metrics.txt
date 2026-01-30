@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Immune system disorders
+
+Accuracy: 0.6853
+AUC_ROC: 0.5653116531165311
+F1: 0.8043

@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Surgical and medical procedures
+
+Accuracy: 0.8287
+AUC_ROC: 0.5889080294765049
+F1: 0.1404

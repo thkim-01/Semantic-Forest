@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Respiratory, thoracic and mediastinal disorders
+
+Accuracy: 0.6748
+AUC_ROC: 0.5906744008159103
+F1: 0.7882

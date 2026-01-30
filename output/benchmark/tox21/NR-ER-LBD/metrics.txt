@@ -1,0 +1,6 @@
+Dataset: tox21
+Target: NR-ER-LBD
+
+Accuracy: 0.9446
+AUC_ROC: 0.6888288093435708
+F1: 0.3186

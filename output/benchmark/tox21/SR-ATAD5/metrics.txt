@@ -1,0 +1,6 @@
+Dataset: tox21
+Target: SR-ATAD5
+
+Accuracy: 0.9618
+AUC_ROC: 0.6723672180201148
+F1: 0.0000

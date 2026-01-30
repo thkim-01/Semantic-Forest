@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Infections and infestations
+
+Accuracy: 0.6993
+AUC_ROC: 0.6470709570957096
+F1: 0.7952

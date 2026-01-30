@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Social circumstances
+
+Accuracy: 0.7727
+AUC_ROC: 0.531313559322034
+F1: 0.0580

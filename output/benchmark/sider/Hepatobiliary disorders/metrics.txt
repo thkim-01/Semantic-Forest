@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Hepatobiliary disorders
+
+Accuracy: 0.6049
+AUC_ROC: 0.6681771420173419
+F1: 0.6295

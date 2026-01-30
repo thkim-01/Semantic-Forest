@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Endocrine disorders
+
+Accuracy: 0.7063
+AUC_ROC: 0.6061260006961364
+F1: 0.1923

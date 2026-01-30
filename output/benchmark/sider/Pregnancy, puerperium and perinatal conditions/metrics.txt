@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Pregnancy, puerperium and perinatal conditions
+
+Accuracy: 0.8811
+AUC_ROC: 0.5110344827586207
+F1: 0.0556

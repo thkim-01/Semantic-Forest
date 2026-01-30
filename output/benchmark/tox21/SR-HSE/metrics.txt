@@ -1,0 +1,6 @@
+Dataset: tox21
+Target: SR-HSE
+
+Accuracy: 0.9436
+AUC_ROC: 0.5975409836065574
+F1: 0.1609

@@ -1,0 +1,34 @@
+REPORT.md
+
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+
+# Semantic Decision Tree artifacts
+ontology/temp_*.owl
+*_results.txt
+*.log
+experiments/__pycache__/
+src/sdt/__pycache__/
+src/ontology/__pycache__/
+comparison_results.txt
+benchmark_results.txt
+confirmation_log.txt
+final_results.txt
+forest_results.txt
+multi_benchmark_results.txt
+optimization_results.txt
+verify_error.txt

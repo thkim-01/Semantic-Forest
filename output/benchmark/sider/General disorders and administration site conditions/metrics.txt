@@ -1,0 +1,6 @@
+Dataset: sider
+Target: General disorders and administration site conditions
+
+Accuracy: 0.8741
+AUC_ROC: 0.6542256542256543
+F1: 0.9323

@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Cardiac disorders
+
+Accuracy: 0.6678
+AUC_ROC: 0.6636822773186409
+F1: 0.7532

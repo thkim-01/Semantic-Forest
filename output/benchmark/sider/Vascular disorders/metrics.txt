@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Vascular disorders
+
+Accuracy: 0.7203
+AUC_ROC: 0.5463823198198198
+F1: 0.8291

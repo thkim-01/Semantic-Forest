@@ -1,0 +1,6 @@
+Dataset: sider
+Target: Product issues
+
+Accuracy: 0.9860
+AUC_ROC: 0.40602836879432624
+F1: 0.0000
