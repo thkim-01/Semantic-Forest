@@ -21,13 +21,23 @@ pip install -r requirements.txt
 
 ## 실행 방법
 
-### 1) BBBP 배깅 모델 실행 (여러 트리 학습)
+### 1) BBBP 포레스트 실행 (여러 트리 학습)
 
 ```bash
 python experiments/verify_semantic_forest.py
 ```
 
+기본 train/test split은 **8:2** 입니다.
+
 실행 결과는 콘솔 로그로 출력되며, 요약 파일이 `forest_results.txt`로 저장됩니다.
+
+### 2) 전체 데이터셋 벤치마크
+
+```bash
+python experiments/verify_semantic_forest_multi.py
+```
+
+결과 CSV는 기본으로 `output/semantic_forest_benchmark.csv`에 저장됩니다.
 
 ## 간단 설명
 

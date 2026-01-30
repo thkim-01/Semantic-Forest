@@ -25,7 +25,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from src.ontology.molecule_ontology import MoleculeOntology
 from src.ontology.smiles_converter import MolecularFeatureExtractor
-from src.sdt.logic_forest import SemanticBaggingForest
+from src.sdt.logic_forest import SemanticForest
 
 
 def _safe_name(name: str) -> str:
@@ -160,7 +160,7 @@ def evaluate_task(
             "note": "too_few_valid_instances",
         }
 
-    forest = SemanticBaggingForest(
+    forest = SemanticForest(
         onto,
         n_estimators=n_estimators,
         max_depth=max_depth,
@@ -200,7 +200,7 @@ def main():
     parser.add_argument("--min-samples-split", type=int, default=20)
     parser.add_argument("--min-samples-leaf", type=int, default=5)
     parser.add_argument("--sample-size", type=int, default=2000)
-    parser.add_argument("--test-size", type=float, default=0.3)
+    parser.add_argument("--test-size", type=float, default=0.2)
     parser.add_argument("--random-state", type=int, default=42)
     parser.add_argument(
         "--all-tasks",
@@ -209,7 +209,7 @@ def main():
     )
     parser.add_argument(
         "--out",
-        default=str(Path("output") / "bagging_forest_benchmark.csv"),
+        default=str(Path("output") / "semantic_forest_benchmark.csv"),
         help="Output CSV path.",
     )
     args = parser.parse_args()

@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from src.ontology.molecule_ontology import MoleculeOntology
 from src.ontology.smiles_converter import MolecularFeatureExtractor
-from src.sdt.logic_forest import SemanticBaggingForest
+from src.sdt.logic_forest import SemanticForest
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score, accuracy_score
 import logging
@@ -17,14 +17,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def verify_forest():
-    logger.info("Starting Semantic Bagging Forest Verification on BBBP...")
+    logger.info("Starting Semantic Forest Verification on BBBP...")
     
     # Load BBBP
     df = pd.read_csv("data/bbbp/BBBP.csv")
     df_sample = df # Full dataset
     
     # Split
-    train_df, test_df = train_test_split(df_sample, test_size=0.3, random_state=42)
+    train_df, test_df = train_test_split(df_sample, test_size=0.2, random_state=42)
     
     # Ontology
     onto_path = "ontology/temp_forest_bbbp.owl"
@@ -47,9 +47,9 @@ def verify_forest():
     test_instances = populate(test_df, "Test")
     
     # Train Forest
-    logger.info("Training Semantic Bagging Forest (5 estimators)...")
+    logger.info("Training Semantic Forest (5 estimators)...")
     # Using Depth 10 as it was best single tree
-    forest = SemanticBaggingForest(
+    forest = SemanticForest(
         onto,
         n_estimators=5,
         max_depth=10,

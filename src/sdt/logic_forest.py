@@ -118,3 +118,7 @@ class SemanticBaggingForest:
 
 # Backwards-compatible alias (older name used in earlier experiments)
 SemanticRandomForest = SemanticBaggingForest
+
+
+# Repo-level naming alias
+SemanticForest = SemanticBaggingForest
