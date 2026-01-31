@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Reproductive system and breast disorders
-
-Accuracy: 0.5175
-AUC_ROC: 0.5435909980430529
-F1: 0.5306

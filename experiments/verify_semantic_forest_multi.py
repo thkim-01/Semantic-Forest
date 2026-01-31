@@ -14,7 +14,7 @@ import csv
 import os
 import re
 import sys
-import subprocess
+import time
 from pathlib import Path
 
 import numpy as np
@@ -36,27 +36,8 @@ def _safe_name(name: str) -> str:
     return s[:80].strip("_") or "task"
 
 
-def _get_git_commit_info() -> tuple[str, str]:
-    """Return (short_sha, subject) for current git HEAD.
-
-    If git is unavailable (e.g., not a repo), returns empty strings.
-    """
-    try:
-        sha = subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"],
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
-        msg = subprocess.run(
-            ["git", "log", "-1", "--pretty=%s"],
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
-        return sha, msg
-    except Exception:
-        return "", ""
+# NOTE: commit_sha / commit_message tracking was intentionally removed.
+# The benchmark outputs are now purely metrics-focused.
 
 
 def _normalize_binary_labels(series: pd.Series) -> pd.Series:
@@ -236,8 +217,6 @@ def _append_result(out_path: Path, res: dict) -> None:
         "auc",
         "acc",
         "note",
-        "commit_sha",
-        "commit_message",
     ]
     write_header = not out_path.exists() or out_path.stat().st_size == 0
 
@@ -246,57 +225,6 @@ def _append_result(out_path: Path, res: dict) -> None:
         if write_header:
             writer.writeheader()
         writer.writerow({k: res.get(k, "") for k in fieldnames})
-
-
-def _ensure_commit_columns(out_path: Path, commit_sha: str, commit_msg: str) -> None:
-    """Ensure existing CSV has commit columns; fill missing values.
-
-    This keeps resume behavior intact while making old rows traceable.
-    """
-    if not out_path.exists() or out_path.stat().st_size == 0:
-        return
-
-    try:
-        df = pd.read_csv(out_path)
-    except Exception:
-        return
-
-    changed = False
-    if "commit_sha" not in df.columns:
-        df["commit_sha"] = ""
-        changed = True
-    if "commit_message" not in df.columns:
-        df["commit_message"] = ""
-        changed = True
-
-    # Fill blanks/NaNs with current commit info so historical rows are still
-    # traceable to "the code version that produced this file".
-    if commit_sha:
-        before = df["commit_sha"].isna().sum() + (df["commit_sha"] == "").sum()
-        df["commit_sha"] = df["commit_sha"].fillna("")
-        df.loc[df["commit_sha"] == "", "commit_sha"] = commit_sha
-        after = df["commit_sha"].isna().sum() + (df["commit_sha"] == "").sum()
-        if before != after:
-            changed = True
-
-    if commit_msg:
-        before = df["commit_message"].isna().sum() + (df["commit_message"] == "").sum()
-        df["commit_message"] = df["commit_message"].fillna("")
-        df.loc[df["commit_message"] == "", "commit_message"] = commit_msg
-        after = df["commit_message"].isna().sum() + (df["commit_message"] == "").sum()
-        if before != after:
-            changed = True
-
-    if changed:
-        # Keep original columns order as much as possible; append commit columns.
-        cols = list(df.columns)
-        # Ensure commit columns are at the end for readability
-        for c in ["commit_sha", "commit_message"]:
-            if c in cols:
-                cols.remove(c)
-        cols += ["commit_sha", "commit_message"]
-        df = df[cols]
-        df.to_csv(out_path, index=False)
 
 
 def _write_dataset_averages(in_path: Path, out_path: Path) -> None:
@@ -321,8 +249,6 @@ def _write_dataset_averages(in_path: Path, out_path: Path) -> None:
         "auc",
         "acc",
         "note",
-        "commit_sha",
-        "commit_message",
     }
     if not required.issubset(set(df.columns)):
         return
@@ -335,19 +261,12 @@ def _write_dataset_averages(in_path: Path, out_path: Path) -> None:
     valid = df[df["auc"].notna() & df["acc"].notna()].copy()
 
     rows = []
-    group_cols = ["commit_sha", "commit_message", "dataset"]
 
-    for (csha, cmsg, dataset), df_ds in df.groupby(group_cols):
-        df_valid = valid[
-            (valid["commit_sha"] == csha)
-            & (valid["commit_message"] == cmsg)
-            & (valid["dataset"] == dataset)
-        ]
+    for dataset, df_ds in df.groupby("dataset"):
+        df_valid = valid[valid["dataset"] == dataset]
 
         rows.append(
             {
-                "commit_sha": csha,
-                "commit_message": cmsg,
                 "dataset": dataset,
                 "n_tasks": int(df_ds["task"].nunique()),
                 "n_rows": int(len(df_ds)),
@@ -361,31 +280,96 @@ def _write_dataset_averages(in_path: Path, out_path: Path) -> None:
             }
         )
 
-    # Overall macro average across all valid rows per commit
+    # Overall macro average across all valid rows.
     if len(valid):
-        for (csha, cmsg), df_valid in valid.groupby(["commit_sha", "commit_message"]):
-            df_all = df[(df["commit_sha"] == csha) & (df["commit_message"] == cmsg)]
-            rows.append(
-                {
-                    "commit_sha": csha,
-                    "commit_message": cmsg,
-                    "dataset": "ALL",
-                    "n_tasks": int(df_all["task"].nunique()),
-                    "n_rows": int(len(df_all)),
-                    "n_valid": int(len(df_valid)),
-                    "auc_mean": float(df_valid["auc"].mean()),
-                    "auc_std": float(df_valid["auc"].std(ddof=0)),
-                    "acc_mean": float(df_valid["acc"].mean()),
-                    "acc_std": float(df_valid["acc"].std(ddof=0)),
-                    "n_train_mean": float(df_valid["n_train"].mean()),
-                    "n_test_mean": float(df_valid["n_test"].mean()),
-                }
-            )
+        rows.append(
+            {
+                "dataset": "ALL",
+                "n_tasks": int(df["task"].nunique()),
+                "n_rows": int(len(df)),
+                "n_valid": int(len(valid)),
+                "auc_mean": float(valid["auc"].mean()),
+                "auc_std": float(valid["auc"].std(ddof=0)),
+                "acc_mean": float(valid["acc"].mean()),
+                "acc_std": float(valid["acc"].std(ddof=0)),
+                "n_train_mean": float(valid["n_train"].mean()),
+                "n_test_mean": float(valid["n_test"].mean()),
+            }
+        )
+
+    if not rows:
+        return
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_df = pd.DataFrame(rows)
     out_df = out_df.sort_values(["dataset"]).reset_index(drop=True)
     out_df.to_csv(out_path, index=False)
+
+
+def _acquire_benchmark_lock(lock_path: Path) -> None:
+    """Acquire a single-run lock to prevent concurrent benchmarks.
+
+    We've observed accidental double-starts (e.g., venv python + system python)
+    which can corrupt output CSVs. This lock makes the benchmark single-instance.
+
+    If a stale lock is found (PID not running), it is removed automatically.
+    """
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    pid = os.getpid()
+
+    def _pid_running(p: int) -> bool:
+        if p <= 0:
+            return False
+        try:
+            # On Windows, os.kill(pid, 0) works to check existence.
+            os.kill(p, 0)
+            return True
+        except Exception:
+            return False
+
+    # Try exclusive create.
+    try:
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(f"pid={pid}\n")
+            f.write(f"started_at={time.time()}\n")
+        return
+    except FileExistsError:
+        # Possible concurrent run or stale lock.
+        try:
+            txt = lock_path.read_text(encoding="utf-8", errors="ignore")
+        except Exception:
+            txt = ""
+        other_pid = 0
+        m = re.search(r"pid=(\d+)", txt)
+        if m:
+            try:
+                other_pid = int(m.group(1))
+            except Exception:
+                other_pid = 0
+
+        if other_pid and _pid_running(other_pid):
+            raise SystemExit(
+                f"Benchmark already running (lock={lock_path}, pid={other_pid})."
+            )
+
+        # Stale lock: remove and retry once.
+        try:
+            lock_path.unlink(missing_ok=True)
+        except Exception:
+            pass
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write(f"pid={pid}\n")
+            f.write(f"started_at={time.time()}\n")
+        return
+
+
+def _release_benchmark_lock(lock_path: Path) -> None:
+    try:
+        lock_path.unlink(missing_ok=True)
+    except Exception:
+        pass
 
 
 def main():
@@ -437,23 +421,6 @@ def main():
     )
 
     parser.add_argument(
-        "--run-message",
-        default=None,
-        help=(
-            "Override the commit_message written to result CSVs. "
-            "Useful when you pre-decide the commit message and want the CSV "
-            "to match it 1:1."
-        ),
-    )
-    parser.add_argument(
-        "--run-sha",
-        default=None,
-        help=(
-            "Override the commit_sha written to result CSVs. "
-            "Normally detected from git; only set this if you know what you're doing."
-        ),
-    )
-    parser.add_argument(
         "--overwrite",
         action="store_true",
         help="Overwrite output CSV if it already exists (disables resume).",
@@ -468,33 +435,25 @@ def main():
     )
     args = parser.parse_args()
 
-    commit_sha, commit_msg = _get_git_commit_info()
-    if args.run_sha is not None:
-        commit_sha = str(args.run_sha)
-    if args.run_message is not None:
-        commit_msg = str(args.run_message)
-
     out_path = Path(args.out)
     out_avg_path = (
         Path(args.out_avg)
         if args.out_avg
         else out_path.with_name(out_path.stem + "_avg.csv")
     )
+
+    # Single-run lock to avoid concurrent benchmarks corrupting CSV outputs.
+    lock_path = out_path.with_suffix(out_path.suffix + ".lock")
+    _acquire_benchmark_lock(lock_path)
     if args.overwrite and out_path.exists():
         out_path.unlink()
-
-    # Backfill commit columns for existing output (helps tracking + keeps resume).
-    _ensure_commit_columns(out_path, commit_sha, commit_msg)
 
     completed: set[tuple[str, str]] = set()
     if out_path.exists() and not args.overwrite:
         try:
             prev = pd.read_csv(out_path)
             if {"dataset", "task"}.issubset(set(prev.columns)):
-                # Resume is commit-aware: only skip tasks already computed for
-                # the current commit_sha.
-                if commit_sha and "commit_sha" in prev.columns:
-                    prev = prev[prev["commit_sha"] == commit_sha]
+                # Resume: only skip tasks already present in the current output file.
                 completed = set(zip(prev["dataset"], prev["task"]))
         except Exception:
             completed = set()
@@ -625,10 +584,6 @@ def main():
                         "note": f"error: {e}",
                     }
 
-                # Attach commit info for traceability
-                res["commit_sha"] = commit_sha
-                res["commit_message"] = commit_msg
-
                 _append_result(out_path, res)
                 completed.add((ds["name"], task))
                 print(
@@ -641,6 +596,8 @@ def main():
         _write_dataset_averages(out_path, out_avg_path)
         print(f"\nSaved: {out_path}")
         print(f"Saved averages: {out_avg_path}")
+
+        _release_benchmark_lock(lock_path)
 
 
 if __name__ == "__main__":

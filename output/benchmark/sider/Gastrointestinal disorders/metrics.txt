@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Gastrointestinal disorders
-
-Accuracy: 0.9021
-AUC_ROC: 0.7312130177514793
-F1: 0.9481

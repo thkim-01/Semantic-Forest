@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns="http://www.drugtargetontology.org/dto/dto_external.owl#"
+    xml:base="http://www.drugtargetontology.org/dto/dto_external.owl"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#">
+
+  <owl:Ontology rdf:about="http://www.drugtargetontology.org/dto/dto_external.owl"/>
+
+</rdf:RDF>

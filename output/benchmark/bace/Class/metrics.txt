@@ -1,6 +1,0 @@
-Dataset: bace
-Target: Class
-
-Accuracy: 0.7360
-AUC_ROC: 0.7521929824561404
-F1: 0.7122

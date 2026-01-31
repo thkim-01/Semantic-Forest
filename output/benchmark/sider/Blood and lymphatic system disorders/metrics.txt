@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Blood and lymphatic system disorders
-
-Accuracy: 0.5909
-AUC_ROC: 0.5808065101332088
-F1: 0.6723

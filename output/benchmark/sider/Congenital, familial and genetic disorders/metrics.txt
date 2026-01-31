@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Congenital, familial and genetic disorders
-
-Accuracy: 0.7937
-AUC_ROC: 0.6232373800584063
-F1: 0.1918

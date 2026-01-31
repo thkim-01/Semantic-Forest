@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Skin and subcutaneous tissue disorders
-
-Accuracy: 0.9161
-AUC_ROC: 0.672004132231405
-F1: 0.9557

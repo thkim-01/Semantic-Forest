@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Metabolism and nutrition disorders
-
-Accuracy: 0.6643
-AUC_ROC: 0.6080523255813953
-F1: 0.7624

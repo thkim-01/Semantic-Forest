@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Eye disorders
-
-Accuracy: 0.6364
-AUC_ROC: 0.5945764462809917
-F1: 0.7127

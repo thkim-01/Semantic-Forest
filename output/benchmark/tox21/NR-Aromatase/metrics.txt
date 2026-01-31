@@ -1,6 +1,0 @@
-Dataset: tox21
-Target: NR-Aromatase
-
-Accuracy: 0.9494
-AUC_ROC: 0.7407013574660634
-F1: 0.1918

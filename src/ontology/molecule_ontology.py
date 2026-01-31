@@ -4,6 +4,7 @@ Molecule Ontology: 화학 온톨로지 구조 정의
 from typing import List, Dict, Set, Optional
 from owlready2 import *
 import os
+from pathlib import Path
 
 
 class MoleculeOntology:
@@ -33,10 +34,15 @@ class MoleculeOntology:
 
     @staticmethod
     def _resolve_default_base_dto_path() -> Optional[str]:
-        """Prefer DTO.owl, fall back to DTO.xrdf if present."""
+        """Pick a local DTO source file.
+
+        In practice, `DTO.xrdf` has been the most robust to parse locally.
+        `DTO.owl` may include imports / constructs that can fail to load
+        depending on Owlready2 version or environment.
+        """
         candidates = [
-            os.path.join("ontology", "DTO.owl"),
             os.path.join("ontology", "DTO.xrdf"),
+            os.path.join("ontology", "DTO.owl"),
             os.path.join("ontology", "DTO.xml"),
         ]
         for p in candidates:
@@ -59,12 +65,41 @@ class MoleculeOntology:
         if loaded_from:
             print(f"Loading base ontology from {loaded_from}...")
             try:
-                self.onto = get_ontology(loaded_from).load()
+                # Avoid slow / brittle remote owl:imports downloads.
+                # If imported ontologies exist as local files in `ontology/`,
+                # Owlready2 will pick them up from onto_path.
+                onto_dir = os.path.abspath("ontology")
+                if onto_dir not in onto_path:
+                    onto_path.append(onto_dir)
+
+                loaded_norm = Path(loaded_from).as_posix()
+                self.onto = get_ontology(loaded_norm).load(only_local=True)
             except Exception as e:
-                print(
-                    f"Failed to load ontology from {loaded_from}: {e}. Creating new."
-                )
-                self.onto = get_ontology("http://www.semanticweb.org/molecule/ontology")
+                # Try other local DTO candidates before falling back to a blank ontology.
+                print(f"Failed to load ontology from {loaded_from}: {e}.")
+
+                fallback_candidates = [
+                    os.path.join("ontology", "DTO.xrdf"),
+                    os.path.join("ontology", "DTO.owl"),
+                    os.path.join("ontology", "DTO.xml"),
+                ]
+                fallback_loaded = False
+                for fb in fallback_candidates:
+                    if (fb != loaded_from) and os.path.exists(fb):
+                        try:
+                            print(f"Trying fallback ontology: {fb}...")
+                            fb_norm = Path(fb).as_posix()
+                            self.onto = get_ontology(fb_norm).load(only_local=True)
+                            fallback_loaded = True
+                            break
+                        except Exception as e2:
+                            print(f"Fallback load failed for {fb}: {e2}.")
+
+                if not fallback_loaded:
+                    print("All local ontology candidates failed. Creating new.")
+                    self.onto = get_ontology(
+                        "http://www.semanticweb.org/molecule/ontology"
+                    )
         else:
             print("No ontology file found. Creating new ontology base.")
             self.onto = get_ontology("http://www.semanticweb.org/molecule/ontology")

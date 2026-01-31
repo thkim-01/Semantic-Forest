@@ -1,6 +1,0 @@
-Dataset: clintox
-Target: FDA_APPROVED
-
-Accuracy: 0.8919
-AUC_ROC: 0.6730951928557857
-F1: 0.9416

@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Nervous system disorders
-
-Accuracy: 0.9021
-AUC_ROC: 0.6695785440613027
-F1: 0.9483

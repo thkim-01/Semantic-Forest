@@ -1,6 +1,0 @@
-Dataset: tox21
-Target: NR-AR
-
-Accuracy: 0.9642
-AUC_ROC: 0.7174288629669998
-F1: 0.4583

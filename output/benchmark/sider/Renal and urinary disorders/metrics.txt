@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Renal and urinary disorders
-
-Accuracy: 0.6294
-AUC_ROC: 0.598785081436681
-F1: 0.7389

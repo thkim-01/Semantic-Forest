@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Musculoskeletal and connective tissue disorders
-
-Accuracy: 0.6678
-AUC_ROC: 0.6032267441860464
-F1: 0.7754

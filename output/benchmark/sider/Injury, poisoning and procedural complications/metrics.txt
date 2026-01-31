@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Injury, poisoning and procedural complications
-
-Accuracy: 0.6119
-AUC_ROC: 0.5677905701754387
-F1: 0.7273

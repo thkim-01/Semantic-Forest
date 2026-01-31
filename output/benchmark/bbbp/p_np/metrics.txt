@@ -1,6 +1,0 @@
-Dataset: bbbp
-Target: p_np
-
-Accuracy: 0.8546
-AUC_ROC: 0.8996737948532078
-F1: 0.9033

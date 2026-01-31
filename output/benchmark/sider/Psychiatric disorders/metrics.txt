@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Psychiatric disorders
-
-Accuracy: 0.6189
-AUC_ROC: 0.5600191296030608
-F1: 0.7348

@@ -9,7 +9,6 @@ SMILES 기반 분자 구조를 **Drug Target Ontology (DTO)** 기반 온톨로�
 
 ## 개발 환경
 
-- OS: Windows (테스트 환경)
 - Python: 3.9+
 - 주요 의존성: `owlready2`, `rdkit`, `scikit-learn`, `pandas`, `numpy`
 

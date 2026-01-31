@@ -1,6 +1,0 @@
-Dataset: sider
-Target: Ear and labyrinth disorders
-
-Accuracy: 0.5629
-AUC_ROC: 0.58931031090122
-F1: 0.5552
